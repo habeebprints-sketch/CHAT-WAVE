@@ -1,40 +1,47 @@
+import { initializeApp } from "firebase/app";
+import { 
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword
+} from "firebase/auth";
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  orderBy,
+  serverTimestamp
+} from "firebase/firestore";
 
-class FirebaseService {
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  final FirebaseFirestore db = FirebaseFirestore.instance;
+// your config
+const firebaseConfig = {
+  apiKey: "AIzaSyDxvSOTQBsy3Kl-pP34MxUDdGWsmUeiMyw",
+  authDomain: "chat-wave-711fc.firebaseapp.com",
+  projectId: "chat-wave-711fc",
+  storageBucket: "chat-wave-711fc.firebasestorage.app",
+  messagingSenderId: "556719208115",
+  appId: "1:556719208115:web:47cb316cde725c134422c6"
+};
 
-  // AUTH
-  Future<User?> signUp(String email, String password) async {
-    final res = await auth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-    return res.user;
-  }
+// start firebase
+const app = initializeApp(firebaseConfig);
 
-  Future<User?> login(String email, String password) async {
-    final res = await auth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-    return res.user;
-  }
+// turn on services
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-  // CHAT
-  Future<void> sendMessage(String text, String userId) async {
-    await db.collection("messages").add({
-      "text": text,
-      "userId": userId,
-      "time": FieldValue.serverTimestamp(),
-    });
-  }
-
-  Stream<QuerySnapshot> getMessages() {
-    return db.collection("messages")
-        .orderBy("time", descending: false)
-        .snapshots();
-  }
-}
+// make available outside
+export {
+  auth,
+  db,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  orderBy,
+  serverTimestamp
+};
